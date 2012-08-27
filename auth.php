@@ -11,9 +11,56 @@ require_once($CFG->dirroot.'/lib/authlib.php');
 
 class auth_plugin_mobile_id extends auth_plugin_base {
 
+    private $wsdluri = 'https://digidocservice.sk.ee/?wsdl';
+
     /** Constructor */
     function auth_plugin_mobile_id() {
         $this->authtype = 'mobile_id';
+        $this->soapoptions = array(
+            'location' => 'https://digidocservice.sk.ee',
+            'uri' => 'https://digidocservice.sk.ee/DigiDocService/DigiDocService.wsdl',
+            'cache_wsdl' => WSDL_CACHE_MEMORY,
+            'trace' => true,
+            'encoding' => 'utf-8',
+            'soap_version' => SOAP_1_2,
+            'classmap' => array(
+                array('MobileAuthenticateResponse' => 'MobileAuthenticateResponse')
+            )
+        );
+        $this->soapclient = new soapclient($this->wsdluri, $this->soapoptions);
+    }
+
+    public function start_authenticate() { 
+
+        // alusta autentimissessiooni 
+        $response = $this->soapclient->MobileAuthenticate(null, null, '+37253840070', 'EST', 'moodle.e-ope.ee', 'Sisselogimine', '00100000000100000000' /*TODO*/, 'asynchClientServer', null, true, false);
+        var_dump($response);
+    }
+
+    public function check_status($sessCode) {
+        //küsi autentimisstaatust 
+        $response = $this->soapclient->GetMobileAuthenticateStatus((int)$sessCode, false);
+        var_dump($response);
+
+    }
+
+    /** Real authentication here */
+    function authenticate_with_mobile_id() {
+        global $DB, $CFG, $SESSION;
+        if ($this->id_card_inserted()) {
+            $conditions = array('idnumber' => $this->get_id_number());
+            $usertologin = $DB->get_record('user', $conditions, $fields='*');
+            if ($usertologin !== false) {
+                $USER = complete_user_login($usertologin);
+                if (optional_param('password_recovery', false, PARAM_BOOL))
+                    $SESSION->wantsurl = $CFG->wwwroot . '/login/change_password.php';
+                $goto = isset($SESSION->wantsurl) ? $SESSION->wantsurl : $CFG->wwwroot;
+                redirect($goto);
+            } else
+                $goto = $CFG->wwwroot . '/login/?no_user_with_id=1';
+        } else
+            $goto = $CFG->wwwroot . '/login/?no_id_card_data=1';
+        redirect($goto);
     }
 
     /** Creates "login with Mobile-ID" link to Moodle login page */
