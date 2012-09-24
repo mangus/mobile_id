@@ -49,11 +49,11 @@ class auth_plugin_mobile_id extends auth_plugin_base {
                 'asynchClientServer', null, true, false
             );
         } catch (Exception $e) {
-            echo 'Caught exception: ';
-            var_dump($e);
+            //echo 'Caught exception: ';
+            //var_dump($e);
         }
 
-        die('todo siin!');
+        //die('todo siin!');
     }
 
     // Pay attention here, when Your Moodle has more languages!
