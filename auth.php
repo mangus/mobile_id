@@ -11,6 +11,8 @@ require_once($CFG->dirroot.'/lib/authlib.php');
 
 class auth_plugin_mobile_id extends auth_plugin_base {
 
+    private $sitename = 'moodle.e-ope.ee';
+    private $sitemessage = 'Sisselogimine';
     private $wsdluri = 'https://digidocservice.sk.ee/?wsdl';
 
     /** Constructor */
@@ -30,11 +32,41 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         $this->soapclient = new soapclient($this->wsdluri, $this->soapoptions);
     }
 
-    public function start_authenticate() { 
+    public function start_authenticate($input) {
+        global $DB;
 
-        // alusta autentimissessiooni 
-        $response = $this->soapclient->MobileAuthenticate(null, null, '+37253840070', 'EST', 'moodle.e-ope.ee', 'Sisselogimine', '00100000000100000000' /*TODO*/, 'asynchClientServer', null, true, false);
-        var_dump($response);
+        $conditions = array('id' => auth_mobile_id_form::get_user_id($input));
+        $userinfo = $DB->get_record('user', $conditions, 'phone2,lang');
+
+        $userphone = auth_mobile_id_form::phone_without_code($userinfo->phone2); // In case the code is already there
+        $userphone = '+372' . $userphone;
+
+        // Remote authenticatin begin...
+        try {
+            $response = $this->soapclient->MobileAuthenticate(
+                null, null, $userphone, auth_plugin_mobile_id::language_map($userinfo->lang),
+                $this->sitename, $this->sitemessage, '00100000000100000000',
+                'asynchClientServer', null, true, false
+            );
+        } catch (Exception $e) {
+            echo 'Caught exception: ';
+            var_dump($e);
+        }
+
+        die('todo siin!');
+    }
+
+    // Pay attention here, when Your Moodle has more languages!
+    public static function language_map($twodigit) {
+        $map = array(
+            'ee' => 'EST',
+            'ru' => 'RUS',
+            'en' => 'ENG'
+        );
+        if (array_key_exists($twodigit, $map))
+            return $map[$twodigit];
+        else
+            return 'EST';
     }
 
     public function check_status($sessCode) {
