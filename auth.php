@@ -66,33 +66,49 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         if (array_key_exists($twodigit, $map))
             return $map[$twodigit];
         else
-            return 'EST';
+            return 'EST'; // Default language
     }
 
-    public function check_status($sessCode) {
+    public function check_status($sesscode) {
         //küsi autentimisstaatust 
-        $response = $this->soapclient->GetMobileAuthenticateStatus((int)$sessCode, false);
+        $response = $this->soapclient->GetMobileAuthenticateStatus((int)$sesscode, false);
         var_dump($response);
+    }
+    public function can_login($sesscode) {
+        //$this->check_status($sesscode);
 
+        //if mobileID auth successful
+            return true;
+        // else return false
     }
 
-    /** Real authentication here */
-    function authenticate_with_mobile_id() {
+    private function get_phone_number($sesscode) {
+        // TODO
+        return;
+    }
+
+    /** Authentication to Moodle here */
+    private function login($sesscode) {
         global $DB, $CFG, $SESSION;
-        if ($this->id_card_inserted()) {
-            $conditions = array('idnumber' => $this->get_id_number());
-            $usertologin = $DB->get_record('user', $conditions, $fields='*');
-            if ($usertologin !== false) {
-                $USER = complete_user_login($usertologin);
-                if (optional_param('password_recovery', false, PARAM_BOOL))
-                    $SESSION->wantsurl = $CFG->wwwroot . '/login/change_password.php';
-                $goto = isset($SESSION->wantsurl) ? $SESSION->wantsurl : $CFG->wwwroot;
-                redirect($goto);
-            } else
-                $goto = $CFG->wwwroot . '/login/?no_user_with_id=1';
+
+        if (!$this->can_login($sesscode))
+            throw new Exception('Invalid Mobile-ID login!');
+
+        $userid = auth_mobile_id_form::get_user_id($this->get_phone_number($sesscode));
+        $usertologin = $DB->get_record('user', array('id' => $userid), $fields='*');
+        if ($usertologin !== false) {
+            $USER = complete_user_login($usertologin);
+            if (optional_param('password_recovery', false, PARAM_BOOL))
+                $SESSION->wantsurl = $CFG->wwwroot . '/login/change_password.php';
+            $goto = isset($SESSION->wantsurl) ? $SESSION->wantsurl : $CFG->wwwroot;
+            redirect($goto);
         } else
-            $goto = $CFG->wwwroot . '/login/?no_id_card_data=1';
-        redirect($goto);
+            throw new Exception('Unexpected error in Mobile-ID login');
+    }
+
+    /** Login is going through file auth/mobile_id/login.php instead of usual login form */
+    function user_login($username, $password) {
+        return false;
     }
 
     /** Creates "login with Mobile-ID" link to Moodle login page */

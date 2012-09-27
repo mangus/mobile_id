@@ -1,10 +1,20 @@
 
-YUI().use('node', 'node-load', function (Y) {
+YUI().use('node', 'io-base', function (Y) {
     var toHide = Y.one('#hideWithJavascript');
     toHide.hide();
     function checkMobileIdStatus() {
-        // Ajax request...
-        Y.one('#content').load('content.html');
+        var request = Y.io('/auth/mobile_id/ajax.php', {
+            method:"GET",
+            data: {'sesscode': 'TODO'},
+            on: {success:
+                function(id, answer) {
+                    if (1 == answer) {
+                        location.href='/auth/mobile_id/login.php?startlogin=SESSCODE';
+                    }
+                }
+            }
+        });
+
     }
     function printDots() {
         var messageText = Y.one('.generalbox');
