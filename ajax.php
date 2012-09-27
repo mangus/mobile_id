@@ -4,14 +4,15 @@ require_once('../../config.php');
 require_once('auth.php');
 
 $logincheck = new auth_plugin_mobile_id();
-$canlogin = $logincheck->can_login(required_param('sesscode', PARAM_ALPHANUM));
+$sesscode = required_param('sesscode', PARAM_ALPHANUM);
+$canlogin = $logincheck->can_login($sesscode);
 if (!optional_param('noajax', false, PARAM_BOOL)) {
     die($canlogin);
 } else {
     if ($canlogin) {
-        die('go-lgoin'); // Redirect to automatic login
+        redirect('/auth/mobile_id/login.php?waitmore=' . $sesscode);
     } else {
-        die('go-back'); // Redirect to mobile-id login page
+        redirect('/auth/mobile_id/login.php?startlogin=' . $sesscode);
     }
 } 
 

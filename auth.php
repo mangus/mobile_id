@@ -57,6 +57,11 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         return '1234'; // control code
     }
 
+    public function get_sess_code() {
+        //TODO
+        return 'SESSCODE';
+    }
+
     // Pay attention here, when Your Moodle has more languages!
     public static function language_map($twodigit) {
         $map = array(
@@ -86,6 +91,10 @@ class auth_plugin_mobile_id extends auth_plugin_base {
     private function get_phone_number($sesscode) {
         // TODO
         return;
+    }
+    public function get_control_code($sesscode) {
+        //TODO
+        return 1234;
     }
 
     /** Authentication to Moodle here */

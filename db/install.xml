@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="auth/mobile_id/db" VERSION="2012102888" COMMENT="XMLDB file for Moodle auth_mobile_id"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="mobile_id_login" COMMENT="Saves information during Mobile-ID logins">
+      <FIELDS>
+        <FIELD NAME="sess_code" TYPE="char" LENGTH="255" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" NEXT="control_code"/>
+        <FIELD NAME="control_code" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="sess_code" NEXT="status"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="control_code"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="sess_code" />
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

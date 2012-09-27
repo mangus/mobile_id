@@ -23,18 +23,34 @@ $login = new auth_plugin_mobile_id();
 
 $step = INSER_NAME_OR_PHONE;
 
-$sesscode = optional_param('startlogin', false, PARAM_ALPHANUM);
+$loginsesscode = optional_param('startlogin', false, PARAM_ALPHANUM);
+$waitsesscode = optional_param('waitmore', false, PARAM_ALPHANUM);
 $timeout = optional_param('timeout', false, PARAM_BOOL);
-if ($sesscode) { // Mobile-ID autentication successful
-    $login->login($sesscode);
-} else if ($timeout) {
+
+if ($loginsesscode) { // Mobile-ID autentication successful
+
+    $login->login($loginsesscode);
+
+} else if ($timeout) { // Mobile-ID timeout
+
    $step = MOBILE_ID_TIMEOUT;
+
+} else if ($waitsesscode) { // After no Javascript status check
+
+    $step = WAIT_FOR_PIN1;
+    $sesscode = $waitsesscode;
+    $controlcode = $login->get_control_code($sesscode);
+
 } else if ($fromform = $form->get_data()) {
+
     // Start Mobile-ID login...
     $step = WAIT_FOR_PIN1;
     $PAGE->requires->js('/auth/mobile_id/status_update.js');
-    $controlcode = $login->start_authenticate($fromform->mobile_id);
+    $login->start_authenticate($fromform->mobile_id);
+    $sesscode = $login->get_sess_code();
+    $controlcode = $login->get_control_code($sesscode);
     // Now start checking status with AJAX...
+
 } else
     $form->set_data($fromform);
 
@@ -53,8 +69,8 @@ switch ($step) {
         echo get_string('check_control_code', 'auth_mobile_id') . '<strong>' . $controlcode . '</strong><br />';
         echo get_string('then_insert_pin1', 'auth_mobile_id') . '<br />';
         echo get_string('waiting_for_mobile_id', 'auth_mobile_id');
-        echo "<div id=\"hideWithJavascript\"><a href=\"/auth/mobile_id/ajax.php?noajax=1&sesscode=sesscodehere\">"
-            . get_string('manual_update', 'auth_mobile_id') . "</a></div>";
+        echo "<span id=\"hideWithJavascript\">... <a href=\"/auth/mobile_id/ajax.php?noajax=1&sesscode=$sesscode\">"
+            . get_string('manual_update', 'auth_mobile_id') . "</a></span>";
         echo $OUTPUT->box_end();
         break;
 
