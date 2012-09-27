@@ -54,6 +54,7 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         }
 
         //die('todo siin!');
+        return '1234'; // control code
     }
 
     // Pay attention here, when Your Moodle has more languages!

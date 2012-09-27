@@ -16,7 +16,10 @@ YUI().use('node', 'io-base', function (Y) {
         });
 
     }
+    var timeCount = 0;
     function printDots() {
+        if (++timeCount > 70)
+            location.href='/auth/mobile_id/login.php?timeout=1';
         var messageText = Y.one('.generalbox');
         messageText.append('&nbsp.');
     }

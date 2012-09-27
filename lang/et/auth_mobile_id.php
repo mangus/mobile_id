@@ -11,5 +11,8 @@ $string['begin_mobile_id_login'] = 'Alusta Mobiil-ID-ga sisselogimist';
 $string['err_whyempty'] = 'Palun sisesta Moodle kasutajanimi või telefoninumber';
 $string['err_incorrect'] = 'Sisestatud väärtus ei vasta ühelegi Moodle kasutajatunnusele ega Moodles salvestatud telefoninumbrile';
 
-$string['waiting_for_pin1'] = 'Palun sisesta oma mobiiltelefonis PIN1';
+$string['check_control_code'] = 'Palun kontrollige, et näete telefoni ekraanil sama numbrit: ';
+$string['then_insert_pin1'] = 'Seejärel sisesta telefonis PIN1';
+$string['waiting_for_mobile_id'] = 'Mobiil-ID vastuse ootamine';
 $string['manual_update'] = 'Uuenda sisselogimise staatust';
+
