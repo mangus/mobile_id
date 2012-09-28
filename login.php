@@ -46,8 +46,7 @@ if ($loginsesscode) { // Mobile-ID autentication successful
     // Start Mobile-ID login...
     $step = WAIT_FOR_PIN1;
     $PAGE->requires->js('/auth/mobile_id/status_update.js');
-    $login->start_authenticate($fromform->mobile_id);
-    $sesscode = $login->get_sess_code();
+    $sesscode = $login->start_authenticate($fromform->mobile_id);
     $controlcode = $login->get_control_code($sesscode);
     // Now start checking status with AJAX...
 

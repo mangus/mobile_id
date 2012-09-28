@@ -35,31 +35,36 @@ class auth_plugin_mobile_id extends auth_plugin_base {
     public function start_authenticate($input) {
         global $DB;
 
-        $conditions = array('id' => auth_mobile_id_form::get_user_id($input));
-        $userinfo = $DB->get_record('user', $conditions, 'phone2,lang');
+        $conditions = array('id' => (int) auth_mobile_id_form::get_user_id($input));
+        $userinfo = $DB->get_record('user', $conditions, 'phone2,lang,idnumber');
 
-        $userphone = auth_mobile_id_form::phone_without_code($userinfo->phone2); // In case the code is already there
-        $userphone = '+372' . $userphone;
+        if (!empty($userinfo->phone2)) {
+            $userphone = auth_mobile_id_form::phone_without_code($userinfo->phone2); // In case the code is already there
+            $userphone = '+372' . $userphone;
+        } else
+            $userphone = null;
 
         // Remote authenticatin begin...
         try {
             $response = $this->soapclient->MobileAuthenticate(
-                null, null, $userphone, auth_plugin_mobile_id::language_map($userinfo->lang),
+                $userinfo->idnumber, 'EE', $userphone, $this->language_map($userinfo->lang),
                 $this->sitename, $this->sitemessage, '00100000000100000000',
                 'asynchClientServer', null, true, false
             );
         } catch (Exception $e) {
-            //echo 'Caught exception: ';
-            //var_dump($e);
+            echo 'Caught exception: ';
+            var_dump($e);
         }
+        var_dump($response);
+        die('todo siin!');
 
-        //die('todo siin!');
-        return '1234'; // control code
-    }
+        // Keeping a recond in database
+        $record = new stdClass();
+        $record->sesscode = 'response_sesscode_here'
+        $record->controlcode = 'response_controlcode_here';
+        $DB->insert_record('mobile_id_login', $record, false);
 
-    public function get_sess_code() {
-        //TODO
-        return 'SESSCODE';
+        return 'response_sesscode_here';
     }
 
     // Pay attention here, when Your Moodle has more languages!
@@ -75,30 +80,33 @@ class auth_plugin_mobile_id extends auth_plugin_base {
             return 'EST'; // Default language
     }
 
-    public function check_status($sesscode) {
-        //küsi autentimisstaatust 
-        $response = $this->soapclient->GetMobileAuthenticateStatus((int)$sesscode, false);
+    public function check_status(int $sesscode) {
+        $response = $this->soapclient->GetMobileAuthenticateStatus($sesscode, false);
         var_dump($response);
-    }
-    public function can_login($sesscode) {
-        //$this->check_status($sesscode);
 
-        //if mobileID auth successful
+        die('todo here');
+        $record = new stdClass();
+        $record->sesscode = $sesscode;
+        $record->status = 'response_status_here';
+        $DB->insert_update('mobile_id_login', $record, false);
+
+        
+    }
+    public function can_login(int $sesscode) {
+        $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'status');
+        if ($mobileid->status == 'USER_AUTHENTICATED')
             return true;
-        // else return false
+        else
+            return false
     }
 
-    private function get_phone_number($sesscode) {
-        // TODO
-        return;
-    }
-    public function get_control_code($sesscode) {
-        //TODO
-        return 1234;
+    public function get_control_code(int $sesscode) {
+        $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'controlcode');
+        return $mobileid->controlcode;
     }
 
     /** Authentication to Moodle here */
-    private function login($sesscode) {
+    private function login(int $sesscode) {
         global $DB, $CFG, $SESSION;
 
         if (!$this->can_login($sesscode))
