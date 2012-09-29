@@ -86,18 +86,23 @@ class auth_plugin_mobile_id extends auth_plugin_base {
     }
 
     public function check_status(int $sesscode) {
+        global $DB;
         /* TODO
         $response = $this->soapclient->GetMobileAuthenticateStatus($sesscode, false);
         var_dump($response);
         die('todo here');
         */
 
+	$dbid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'id');
+
         $record = new stdClass();
+        $record->id = $dbid->id;
         $record->sesscode = $sesscode;
         $record->status = 'USER_AUTHENTICATED';
         $DB->insert_update('mobile_id_login', $record, false);        
     }
     public function can_login(int $sesscode) {
+        global $DB;
         $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'status');
         if ($mobileid->status == 'USER_AUTHENTICATED')
             return true;
@@ -105,7 +110,8 @@ class auth_plugin_mobile_id extends auth_plugin_base {
             return false;
     }
 
-    public function get_control_code(int $sesscode) {
+    public function get_control_code($sesscode) {
+        global $DB;
         $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'controlcode');
         return $mobileid->controlcode;
     }

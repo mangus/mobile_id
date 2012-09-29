@@ -6,9 +6,9 @@
   <TABLES>
     <TABLE NAME="mobile_id_login" COMMENT="Saves information during Mobile-ID logins">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="sesscode"/>
-        <FIELD NAME="sesscode" TYPE="int" LENGTH="100" NOTNULL="true" SEQUENCE="true" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="controlcode"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="sesscode"/>
+        <FIELD NAME="sesscode" TYPE="int" LENGTH="100" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="sesscode" NEXT="controlcode"/>
         <FIELD NAME="controlcode" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="status"/>
         <FIELD NAME="status" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="controlcode" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="status"/>
@@ -17,6 +17,9 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid_in_mobile_id_login"/>
         <KEY NAME="userid_in_mobile_id_login" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="sesscode_index" UNIQUE="true" FIELDS="sesscode"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

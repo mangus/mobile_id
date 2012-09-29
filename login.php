@@ -47,7 +47,7 @@ if ($loginsesscode) { // Mobile-ID autentication successful
     $step = WAIT_FOR_PIN1;
     $PAGE->requires->js('/auth/mobile_id/status_update.js');
     $sesscode = $login->start_authenticate($fromform->mobile_id);
-    $controlcode = $login->get_control_code($sesscode);
+    $controlcode = $login->get_control_code(intval($sesscode));
     // Now start checking status with AJAX...
 
 } else
@@ -71,6 +71,7 @@ switch ($step) {
         echo "<span id=\"hideWithJavascript\">... <a href=\"/auth/mobile_id/ajax.php?noajax=1&sesscode=$sesscode\">"
             . get_string('manual_update', 'auth_mobile_id') . "</a></span>";
         echo $OUTPUT->box_end();
+	echo "<div style=\"display: none;\" id=\"sesscode\">$sesscode</div>";
         break;
 
     case MOBILE_ID_TIMEOUT:
