@@ -3,17 +3,19 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
+  <TABLES>
     <TABLE NAME="mobile_id_login" COMMENT="Saves information during Mobile-ID logins">
       <FIELDS>
         <FIELD NAME="sesscode" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="sesscode" NEXT="controlcode"/>
         <FIELD NAME="controlcode" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="status"/>
         <FIELD NAME="status" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="controlcode" NEXT="starttime"/>
-        <FIELD NAME="starttime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="NOW()" SEQUENCE="false" PREVIOUS="status"/>
+        <FIELD NAME="starttime" TYPE="datetime" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="status"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="sesscode" NEXT="userid_in_mobile_id_login"/>
         <KEY NAME="userid_in_mobile_id_login" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
+  </TABLES>
 </XMLDB>
