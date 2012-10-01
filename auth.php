@@ -85,26 +85,25 @@ class auth_plugin_mobile_id extends auth_plugin_base {
             return 'EST'; // Default language
     }
 
-    public function check_status(int $sesscode) {
+    public function update_status($sesscode) {
         global $DB;
         /* TODO
         $response = $this->soapclient->GetMobileAuthenticateStatus($sesscode, false);
         var_dump($response);
         die('todo here');
         */
-
 	$dbid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'id');
 
         $record = new stdClass();
         $record->id = $dbid->id;
         $record->sesscode = $sesscode;
         $record->status = 'USER_AUTHENTICATED';
-        $DB->insert_update('mobile_id_login', $record, false);        
+        $DB->update_record('mobile_id_login', $record, false);        
     }
-    public function can_login(int $sesscode) {
+    public function can_login($sesscode) {
         global $DB;
         $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'status');
-        if ($mobileid->status == 'USER_AUTHENTICATED')
+        if (!empty($mobileid) && $mobileid->status == 'USER_AUTHENTICATED')
             return true;
         else
             return false;
@@ -117,14 +116,14 @@ class auth_plugin_mobile_id extends auth_plugin_base {
     }
 
     /** Authentication to Moodle here */
-    private function login(int $sesscode) {
+    public function login($sesscode) {
         global $DB, $CFG, $SESSION;
 
         if (!$this->can_login($sesscode))
             throw new Exception('Invalid Mobile-ID login!');
 
         $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'userid');
-        $usertologin = $DB->get_record('user', array('id' => $$mobileid->userid), $fields='*');
+        $usertologin = $DB->get_record('user', array('id' => $mobileid->userid), $fields='*');
         if ($usertologin !== false) {
             $USER = complete_user_login($usertologin);
             if (optional_param('password_recovery', false, PARAM_BOOL))
