@@ -166,7 +166,7 @@ class auth_plugin_mobile_id extends auth_plugin_base {
             array(
                 'url' => new moodle_url($CFG->wwwroot . '/auth/mobile_id/login.php'),
                 'icon' => new pix_icon('mobiilid', 'Login with Mobil-ID'),
-                    // Need to copy this file (cp auth/est_id_card/images/idkaart.gif pix/)
+                    // Need to copy this file (cp auth/mobile_id/images/mobiilid.gif pix/)
                 'name' => get_string('login_with', 'auth_mobile_id')
             )
         );
