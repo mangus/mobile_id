@@ -4,7 +4,7 @@ require_once('../../config.php');
 require_once('auth.php');
 
 $logincheck = new auth_plugin_mobile_id();
-$sesscode = required_param('sesscode', PARAM_ALPHANUM);
+$sesscode = (int) required_param('sesscode', PARAM_ALPHANUM);
 
 $logincheck->update_status($sesscode);
 $status = $logincheck->get_status($sesscode);

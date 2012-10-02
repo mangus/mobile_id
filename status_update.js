@@ -8,16 +8,20 @@ YUI().use('node', 'io-base', function (Y) {
             method:"GET",
             data: {'sesscode': sesscode},
             on: {success:
-                function(id, answer) {
-                    if ('USER_AUTHENTICATED' == answer.response) {
-                        location.href='/auth/mobile_id/login.php?startlogin=' + sesscode;
-                    } else if ('EXPIRED_TRANSACTION' == answer.response) {
-                        location.href='/auth/mobile_id/login.php?timeout=1';                        
-                    } else if ('OUTSTANDING_TRANSACTION' == answer.response) {
-                        // Waiting more...
-                    } else
+                    function(id, answer) {
+                        if ('USER_AUTHENTICATED' == answer.response) {
+                            location.href='/auth/mobile_id/login.php?startlogin=' + sesscode;
+                        } else if ('EXPIRED_TRANSACTION' == answer.response) {
+                            location.href='/auth/mobile_id/login.php?timeout=1';                        
+                        } else if ('OUTSTANDING_TRANSACTION' == answer.response) {
+                            // Waiting more...
+                        } else
+                            location.href='/auth/mobile_id/login.php?error=1';
+                    },
+                failure:
+                    function(id, answer) {
                         location.href='/auth/mobile_id/login.php?error=1';
-                }
+                    }
             }
         });
 

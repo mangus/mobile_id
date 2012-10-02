@@ -32,6 +32,7 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         $this->soapclient = new soapclient($this->wsdluri, $this->soapoptions);
     }
 
+    /** Starts Mobile-ID authentication sessopm with DigiDocService */
     public function start_authenticate($input) {
         global $DB;
 
@@ -53,6 +54,7 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         } catch (Exception $e) {
             throw new Exception('Mobil-ID error');
         }
+
         // Keeping a recond in database
         $record = new stdClass();
         $record->sesscode = $response['Sesscode'];
@@ -65,7 +67,10 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         return $response['Sesscode'];
     }
 
-    // Pay attention here, when Your Moodle has more languages!
+    /**
+     * Mapping Moodle language to Mobile-ID language
+     * Pay attention here, when Your Moodle has more languages!
+     */
     public static function language_map($twodigit) {
         $map = array(
             'ee' => 'EST',
@@ -80,45 +85,48 @@ class auth_plugin_mobile_id extends auth_plugin_base {
 
     public function status_okay($sesscode) {
         global $DB;
-        $isok = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'status');
+        $isok = $DB->get_record('mobile_id_login', array('sesscode' => (int) $sesscode), 'status');
         return $isok->status == 'OK';
     }
 
+    public function can_login($sesscode) {
+        $status = $this->get_status((int) $sesscode);
+        return 'USER_AUTHENTICATED' == $status ? true : false;
+    }
+
+    /** Checks status from DigiDocService and updates plugin's database entry for current login */
     public function update_status($sesscode) {
         global $DB;
 
-        $response = $this->soapclient->GetMobileAuthenticateStatus($sesscode, false);
-    	$dbid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'id');
+        $response = $this->soapclient->GetMobileAuthenticateStatus((int) $sesscode, false);
+    	$dbid = $DB->get_record('mobile_id_login', array('sesscode' => (int) $sesscode), 'id');
 
         $record = new stdClass();
         $record->id = $dbid->id;
-        $record->sesscode = $sesscode;
+        $record->sesscode = (int) $sesscode;
         $record->status = $response['Status'];
         $DB->update_record('mobile_id_login', $record, false);        
-    }
-    public function can_login($sesscode) {
-        $status = $this->get_status($sesscode);
-        return 'USER_AUTHENTICATED' == $status ? true : false;
     }
 
     public function get_status($sesscode) {
         global $DB;
-        $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'status');
+        $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => (int) $sesscode), 'status');
         return $mobileid->status;
     }
 
     public function get_control_code($sesscode) {
         global $DB;
-        $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'controlcode');
+        $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => (int) $sesscode), 'controlcode');
         return $mobileid->controlcode;
     }
 
+    /** Deletes current login entry from database */
     private function clean_login($userid) {
         global $DB;
         $DB->delete_records('mobile_id_login', array('userid' => $userid));
     }
 
-    /** Deletes used (not needed anymore) sessions from database */
+    /** Deletes used (unactive) sessions from database */
     private function clean_old_logins() {
         global $DB;
         $DB->delete_records_select('mobile_id_login', 'starttime < ?', array(time()-120 /* 2 minutes */));
@@ -128,10 +136,10 @@ class auth_plugin_mobile_id extends auth_plugin_base {
     public function login($sesscode) {
         global $DB, $CFG, $SESSION;
 
-        if (!$this->can_login($sesscode))
+        if (!$this->can_login((int) $sesscode))
             throw new Exception('Invalid Mobile-ID login!');
 
-        $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'userid');
+        $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => (int) $sesscode), 'userid');
         $usertologin = $DB->get_record('user', array('id' => $mobileid->userid), $fields='*');
         if ($usertologin !== false) {
             $USER = complete_user_login($usertologin);

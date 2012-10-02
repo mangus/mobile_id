@@ -9,6 +9,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2012102888;
+$plugin->version   = 2012100200;
 $plugin->component = 'auth_mobile_id';
 

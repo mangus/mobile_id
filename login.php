@@ -23,31 +23,26 @@ $login = new auth_plugin_mobile_id();
 
 $step = INSER_NAME_OR_PHONE;
 
-$loginsesscode = optional_param('startlogin', false, PARAM_ALPHANUM);
-$waitsesscode = optional_param('waitmore', false, PARAM_ALPHANUM);
+$loginsesscode = (int) optional_param('startlogin', false, PARAM_ALPHANUM);
+$waitsesscode = (int) optional_param('waitmore', false, PARAM_ALPHANUM);
 $timeout = optional_param('timeout', false, PARAM_BOOL);
 $error = optional_param('error', false, PARAM_BOOL);
 
-if ($USER->id) {
-    // User already logged in
+if ($USER->id) { // User already logged in
     redirect('/login/');
 
 } else if ($loginsesscode) { // Mobile-ID autentication successful
-
     $login->login($loginsesscode);
 
 } else if ($error or $timeout) { // Mobile-ID timeout
-
    $step = MOBILE_ID_ERROR;
 
 } else if ($waitsesscode) { // After no Javascript status check
-
     $step = WAIT_FOR_PIN1;
     $sesscode = $waitsesscode;
     $controlcode = $login->get_control_code($sesscode);
 
 } else if ($fromform = $form->get_data()) {
-
     // Start Mobile-ID login...
     $step = WAIT_FOR_PIN1;
     $PAGE->requires->js('/auth/mobile_id/status_update.js');
