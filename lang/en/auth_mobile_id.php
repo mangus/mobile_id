@@ -16,6 +16,7 @@ $string['then_insert_pin1'] = 'Seejärel sisestage telefonis PIN1';
 $string['waiting_for_mobile_id'] = 'Mobiil-ID vastuse ootamine';
 $string['manual_update'] = 'Uuenda sisselogimise staatust';
 
+$string['error'] = 'Mobiil-ID-ga sisselogimine ebaõnnestus. Võimalikud põhjused: kasutaja katkestamine; telefon ei ole levialas; rakenduse tehniline viga.';
 $string['timeout'] = 'Vastuse saabumine võttis liiga kaua aega, katkestame ootamise.';
 $string['try_again'] = 'Alusta uuesti Mobiil-ID-ga sisselogimist';
 

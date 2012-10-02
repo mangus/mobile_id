@@ -7,7 +7,7 @@ require_once('mobile_id_form.php');
 // Login steps
 define('INSER_NAME_OR_PHONE', 1);
 define('WAIT_FOR_PIN1', 2);
-define('MOBILE_ID_TIMEOUT', 9);
+define('MOBILE_ID_ERROR', 9);
 
 $context = get_context_instance(CONTEXT_SYSTEM);
 
@@ -26,14 +26,19 @@ $step = INSER_NAME_OR_PHONE;
 $loginsesscode = optional_param('startlogin', false, PARAM_ALPHANUM);
 $waitsesscode = optional_param('waitmore', false, PARAM_ALPHANUM);
 $timeout = optional_param('timeout', false, PARAM_BOOL);
+$error = optional_param('error', false, PARAM_BOOL);
 
-if ($loginsesscode) { // Mobile-ID autentication successful
+if ($USER->id) {
+    // User already logged in
+    redirect('/login/');
+
+} else if ($loginsesscode) { // Mobile-ID autentication successful
 
     $login->login($loginsesscode);
 
-} else if ($timeout) { // Mobile-ID timeout
+} else if ($error or $timeout) { // Mobile-ID timeout
 
-   $step = MOBILE_ID_TIMEOUT;
+   $step = MOBILE_ID_ERROR;
 
 } else if ($waitsesscode) { // After no Javascript status check
 
@@ -47,6 +52,9 @@ if ($loginsesscode) { // Mobile-ID autentication successful
     $step = WAIT_FOR_PIN1;
     $PAGE->requires->js('/auth/mobile_id/status_update.js');
     $sesscode = $login->start_authenticate($fromform->mobile_id);
+    if (!$login->status_okay($sesscode)) {
+        throw new Exception('Mobile-ID not working.');
+    }
     $controlcode = $login->get_control_code(intval($sesscode));
     // Now start checking status with AJAX...
 
@@ -74,8 +82,12 @@ switch ($step) {
 	echo "<div style=\"display: none;\" id=\"sesscode\">$sesscode</div>";
         break;
 
-    case MOBILE_ID_TIMEOUT:
-        echo $OUTPUT->box(get_string('timeout', 'auth_mobile_id'));
+    case MOBILE_ID_ERROR:
+        if ($timeout)
+            echo $OUTPUT->box(get_string('timeout', 'auth_mobile_id'));
+        else
+            echo $OUTPUT->box(get_string('error', 'auth_mobile_id'));
+
         echo "<div><a href=\"/auth/mobile_id/login.php\">"
             . get_string('try_again', 'auth_mobile_id') . "</a></div>";
         break;

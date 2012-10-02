@@ -7,15 +7,23 @@ $logincheck = new auth_plugin_mobile_id();
 $sesscode = required_param('sesscode', PARAM_ALPHANUM);
 
 $logincheck->update_status($sesscode);
-$canlogin = $logincheck->can_login($sesscode);
+$status = $logincheck->get_status($sesscode);
 
 if (!optional_param('noajax', false, PARAM_BOOL)) {
-    echo $canlogin;
+    echo $status;
 } else {
-    if ($canlogin) {
-        redirect('/auth/mobile_id/login.php?waitmore=' . $sesscode);
-    } else {
-        redirect('/auth/mobile_id/login.php?startlogin=' . $sesscode);
+    switch ($status) {
+        case 'USER_AUTHENTICATED':
+            redirect('/auth/mobile_id/login.php?startlogin=' . $sesscode);
+            break;
+        case 'EXPIRED_TRANSACTION':
+            redirect('/auth/mobile_id/login.php?timeout=' . $sesscode);
+            break;
+        case 'OUTSTANDING_TRANSACTION':
+            redirect('/auth/mobile_id/login.php?waitmore=' . $sesscode);
+            break; 
+        default:
+            redirect('/auth/mobile_id/login.php?error=' . $sesscode);
     }
 } 
 

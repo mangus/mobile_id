@@ -44,8 +44,6 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         } else
             $userphone = null;
 
-        // Remote authenticatin begin...
-        /*
         try {
             $response = $this->soapclient->MobileAuthenticate(
                 $userinfo->idnumber, 'EE', $userphone, $this->language_map($userinfo->lang),
@@ -53,23 +51,18 @@ class auth_plugin_mobile_id extends auth_plugin_base {
                 'asynchClientServer', null, true, false
             );
         } catch (Exception $e) {
-            echo 'Caught exception: ';
-            var_dump($e);
+            throw new Exception('Mobil-ID error');
         }
-        var_dump($response);
-        die('todo siin!');
-        */
-
         // Keeping a recond in database
         $record = new stdClass();
-        $record->sesscode = 123456789; //response_sesscode_here
+        $record->sesscode = $response['Sesscode'];
         $record->userid = $userinfo->id;
-        $record->controlcode = 1234; // response_controlcode_here
-        $record->status = 'OK'; // from response
-        $record->timemodified = time();
+        $record->controlcode = $response['ChallengeID'];
+        $record->status = $response['Status'];
+        $record->starttime = time();
         $DB->insert_record('mobile_id_login', $record);
 
-        return 123456789; // response_sesscode_here
+        return $response['Sesscode'];
     }
 
     // Pay attention here, when Your Moodle has more languages!
@@ -85,34 +78,50 @@ class auth_plugin_mobile_id extends auth_plugin_base {
             return 'EST'; // Default language
     }
 
+    public function status_okay($sesscode) {
+        global $DB;
+        $isok = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'status');
+        return $isok->status == 'OK';
+    }
+
     public function update_status($sesscode) {
         global $DB;
-        /* TODO
+
         $response = $this->soapclient->GetMobileAuthenticateStatus($sesscode, false);
-        var_dump($response);
-        die('todo here');
-        */
-	$dbid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'id');
+    	$dbid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'id');
 
         $record = new stdClass();
         $record->id = $dbid->id;
         $record->sesscode = $sesscode;
-        $record->status = 'USER_AUTHENTICATED';
+        $record->status = $response['Status'];
         $DB->update_record('mobile_id_login', $record, false);        
     }
     public function can_login($sesscode) {
+        $status = $this->get_status($sesscode);
+        return 'USER_AUTHENTICATED' == $status ? true : false;
+    }
+
+    public function get_status($sesscode) {
         global $DB;
         $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'status');
-        if (!empty($mobileid) && $mobileid->status == 'USER_AUTHENTICATED')
-            return true;
-        else
-            return false;
+        return $mobileid->status;
     }
 
     public function get_control_code($sesscode) {
         global $DB;
         $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => $sesscode), 'controlcode');
         return $mobileid->controlcode;
+    }
+
+    private function clean_login($userid) {
+        global $DB;
+        $DB->delete_records('mobile_id_login', array('userid' => $userid));
+    }
+
+    /** Deletes used (not needed anymore) sessions from database */
+    private function clean_old_logins() {
+        global $DB;
+        $DB->delete_records_select('mobile_id_login', 'starttime < ?', array(time()-120 /* 2 minutes */));
     }
 
     /** Authentication to Moodle here */
@@ -126,6 +135,8 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         $usertologin = $DB->get_record('user', array('id' => $mobileid->userid), $fields='*');
         if ($usertologin !== false) {
             $USER = complete_user_login($usertologin);
+            $this->clean_login($mobileid->userid);
+            $this->clean_old_logins();
             if (optional_param('password_recovery', false, PARAM_BOOL))
                 $SESSION->wantsurl = $CFG->wwwroot . '/login/change_password.php';
             $goto = isset($SESSION->wantsurl) ? $SESSION->wantsurl : $CFG->wwwroot;

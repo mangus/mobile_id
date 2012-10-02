@@ -9,18 +9,20 @@ YUI().use('node', 'io-base', function (Y) {
             data: {'sesscode': sesscode},
             on: {success:
                 function(id, answer) {
-                    if (1 == answer.response) {
+                    if ('USER_AUTHENTICATED' == answer.response) {
                         location.href='/auth/mobile_id/login.php?startlogin=' + sesscode;
-                    }
+                    } else if ('EXPIRED_TRANSACTION' == answer.response) {
+                        location.href='/auth/mobile_id/login.php?timeout=1';                        
+                    } else if ('OUTSTANDING_TRANSACTION' == answer.response) {
+                        // Waiting more...
+                    } else
+                        location.href='/auth/mobile_id/login.php?error=1';
                 }
             }
         });
 
     }
-    var timeCount = 0;
     function printDots() {
-        if (++timeCount > 80)
-            location.href='/auth/mobile_id/login.php?timeout=1';
         var messageText = Y.one('.generalbox');
         messageText.append('&nbsp.');
     }
