@@ -23,10 +23,11 @@ $login = new auth_plugin_mobile_id();
 
 $step = INSER_NAME_OR_PHONE;
 
-$loginsesscode = (int) optional_param('startlogin', false, PARAM_ALPHANUM);
-$waitsesscode = (int) optional_param('waitmore', false, PARAM_ALPHANUM);
+$loginsesscode = (int) optional_param('startlogin', false, PARAM_NUMBER);
+$waitsesscode = (int) optional_param('waitmore', false, PARAM_NUMBER);
 $timeout = optional_param('timeout', false, PARAM_BOOL);
 $error = optional_param('error', false, PARAM_BOOL);
+$nouserdata = optional_param('nouserdata', false, PARAM_BOOL);
 
 if ($USER->id) { // User already logged in
     redirect('/login/');
@@ -34,7 +35,7 @@ if ($USER->id) { // User already logged in
 } else if ($loginsesscode) { // Mobile-ID autentication successful
     $login->login($loginsesscode);
 
-} else if ($error or $timeout) { // Mobile-ID timeout
+} else if ($error or $timeout or $nouserdata) { // Mobile-ID timeout
    $step = MOBILE_ID_ERROR;
 
 } else if ($waitsesscode) { // After no Javascript status check
@@ -80,8 +81,10 @@ switch ($step) {
     case MOBILE_ID_ERROR:
         if ($timeout)
             echo $OUTPUT->box(get_string('timeout', 'auth_mobile_id'));
-        else
+        else if ($error)
             echo $OUTPUT->box(get_string('error', 'auth_mobile_id'));
+        else if ($nouserdata)
+            echo $OUTPUT->box(get_string('no_user_data', 'auth_mobile_id'));
 
         echo "<div><a href=\"/auth/mobile_id/login.php\">"
             . get_string('try_again', 'auth_mobile_id') . "</a></div>";

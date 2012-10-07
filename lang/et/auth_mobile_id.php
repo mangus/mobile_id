@@ -4,7 +4,7 @@ $string['pluginname'] = 'Mobiil-ID-ga sisselogimine';
 $string['login_with'] = 'Mobiil-ID-ga sisselogimine';
 
 $string['loginwithmobileid'] = 'Mobiil-ID-ga sisselogimine';
-$string['insertnameor'] = 'Mobiil-ID-ga Moodlesse sisselogimiseks sisesta oma kasutajanimi või telefoninumber';
+$string['insertnameor'] = 'Moodlesse Mobiil-ID-ga sisselogimiseks peab kasutaja profiilis olema määratud isikukood või telefoninumber.<br /><br />Mobiil-ID-ga sisselogimiseks sisesta oma kasutajanimi või telefoninumber. Telefoninumber võib olla kujul "5xxxxxxx", "+3725xxxxxxx" või "003725xxxxxxx".';
 $string['usernameorphone'] = 'Moodle kasutajanimi või telefoninumber';
 $string['begin_mobile_id_login'] = 'Alusta Mobiil-ID-ga sisselogimist';
 
@@ -19,4 +19,6 @@ $string['manual_update'] = 'Uuenda sisselogimise staatust';
 $string['error'] = 'Mobiil-ID-ga sisselogimine ebaõnnestus. Võimalikud põhjused: kasutaja katkestamine; telefon ei ole levialas; rakenduse tehniline viga.';
 $string['timeout'] = 'Vastuse saabumine võttis liiga kaua aega, katkestame ootamise.';
 $string['try_again'] = 'Alusta uuesti Mobiil-ID-ga sisselogimist';
+
+$string['no_user_data'] = 'Mobiil-ID-ga ei ole võimalik sisse logida, kuna kasutaja andmete all puudub isikukood ja mobiiltelefoni number.';
 

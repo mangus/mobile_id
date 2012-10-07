@@ -42,6 +42,8 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         if (!empty($userinfo->phone2)) {
             $userphone = auth_mobile_id_form::phone_without_code($userinfo->phone2); // In case the code is already there
             $userphone = '+372' . $userphone;
+        } else if (empty($userinfo->idnumber)) {
+            redirect('/auth/mobile_id/login.php?nouserdata=1');
         } else
             $userphone = null;
 
