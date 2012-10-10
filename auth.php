@@ -144,6 +144,15 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => (int) $sesscode), 'userid');
         $usertologin = $DB->get_record('user', array('id' => $mobileid->userid), $fields='*');
         if ($usertologin !== false) {
+
+            // This block is e-Learning Development Center specific "hack",
+            // for forcing users to insert their ID-number.
+            // You propably need to delete this
+            require_once($CFG->dirroot.'/auth/askidnumber/auth.php');
+            $ask = new auth_plugin_askidnumber();
+            $ask->user_authenticated_hook($usertologin);
+            // End of this block
+
             $USER = complete_user_login($usertologin);
             $this->clean_login($mobileid->userid);
             $this->clean_old_logins();
