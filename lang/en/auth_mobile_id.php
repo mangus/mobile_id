@@ -21,4 +21,4 @@ $string['timeout'] = 'Mobile-ID timeout.';
 $string['try_again'] = 'Begin login with Mobil-ID again';
 
 $string['no_user_data'] = 'Login with Mobile-ID is not possible, because user has no id-code or mobile phone number in Moodle user profile.';
-
+$string['multiple_numbers'] = 'Inserted phone number is connected to multiple Moodle users. Please login using Your Moodle username or contant Moodle support (<a href="mailto:moodle@eitsa.ee">moodle@eitsa.ee</a>).';

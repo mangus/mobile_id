@@ -21,4 +21,5 @@ $string['timeout'] = 'Vastuse saabumine võttis liiga kaua aega, katkestame oota
 $string['try_again'] = 'Alusta uuesti Mobiil-ID-ga sisselogimist';
 
 $string['no_user_data'] = 'Mobiil-ID-ga ei ole võimalik sisse logida, kuna kasutaja andmete all puudub isikukood ja mobiiltelefoni number.';
+$string['multiple_numbers'] = 'Sisestatud telefoninumber on seotud rohkem kui ühe Moodle kontoga. Palun logi sisse kasutades oma kasutajatunnust või võta ühendust Moodle kasutajatoega (<a href="mailto:moodle@eitsa.ee">moodle@eitsa.ee</a>).';
 
