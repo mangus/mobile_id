@@ -142,7 +142,7 @@ class auth_plugin_mobile_id extends auth_plugin_base {
             throw new Exception('Invalid Mobile-ID login!');
 
         $mobileid = $DB->get_record('mobile_id_login', array('sesscode' => (int) $sesscode), 'userid');
-        $usertologin = $DB->get_record('user', array('id' => $mobileid->userid), $fields='*');
+        $usertologin = get_complete_user_data('id', $mobileid->userid);
         if ($usertologin !== false) {
 
             // This block is e-Learning Development Center specific "hack",
