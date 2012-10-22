@@ -1,5 +1,5 @@
-mobile_id
-=========
+Moodle Mobile-ID authentication plugin
+======================================
 
 Moodle auth plugin, that enables Mobile-ID logins.
 Works also without Javascript.
