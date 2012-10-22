@@ -4,7 +4,7 @@ $string['pluginname'] = 'Mobiil-ID-ga sisselogimine';
 $string['login_with'] = 'Mobiil-ID-ga sisselogimine';
 
 $string['loginwithmobileid'] = 'Mobiil-ID-ga sisselogimine';
-$string['insertnameor'] = 'Moodlesse Mobiil-ID-ga sisselogimiseks peab kasutaja profiilis olema määratud isikukood või telefoninumber.<br /><br />Mobiil-ID-ga sisselogimiseks sisesta oma kasutajanimi või telefoninumber. Telefoninumber võib olla kujul "5xxxxxxx", "+3725xxxxxxx" või "003725xxxxxxx".';
+$string['insertnameor'] = 'Moodlesse Mobiil-ID-ga sisselogimiseks peab kasutaja profiilis olema määratud isikukood või telefoninumber.<br /><br />Mobiil-ID-ga sisselogimiseks sisesta oma kasutajanimi või telefoninumber kujul "5xxxxxxx", "+3725xxxxxxx" või "003725xxxxxxx".';
 $string['usernameorphone'] = 'Moodle kasutajanimi või telefoninumber';
 $string['begin_mobile_id_login'] = 'Alusta Mobiil-ID-ga sisselogimist';
 

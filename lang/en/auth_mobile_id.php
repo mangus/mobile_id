@@ -4,7 +4,7 @@ $string['pluginname'] = 'Login with Mobil-ID';
 $string['login_with'] = 'Login with Mobil-ID';
 
 $string['loginwithmobileid'] = 'Login with Mobil-ID';
-$string['insertnameor'] = 'User has to have id-code or mobile phone number in user profile in order to login with Mobile-ID into Moodle.<br /><br />To login with Mobile-ID insert your Moodle username or phone number. Phone number can be in format "5xxxxxxx", "+3725xxxxxxx" or "003725xxxxxxx".';
+$string['insertnameor'] = 'User has to have id-code or mobile phone number in user profile in order to login with Mobile-ID into Moodle.<br /><br />To login with Mobile-ID insert your Moodle username or phone number in format "5xxxxxxx", "+3725xxxxxxx" or "003725xxxxxxx".';
 $string['usernameorphone'] = 'Moodle username or phone number';
 $string['begin_mobile_id_login'] = 'Begin login with Mobiil-ID';
 
