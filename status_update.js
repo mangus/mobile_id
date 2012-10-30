@@ -16,11 +16,11 @@ YUI().use('node', 'io-base', function (Y) {
                         } else if ('OUTSTANDING_TRANSACTION' == answer.response) {
                             // Waiting more...
                         } else
-                            location.href='/auth/mobile_id/login.php?error=1';
+                            location.href='/auth/mobile_id/login.php?error=1&status=' + answer.response;
                     },
                 failure:
                     function(id, answer) {
-                        location.href='/auth/mobile_id/login.php?error=1';
+                        location.href='/auth/mobile_id/login.php?error=1&status=AJAX_REQUEST_FAILURE';
                     }
             }
         });

@@ -23,7 +23,7 @@ if (!optional_param('noajax', false, PARAM_BOOL)) {
             redirect('/auth/mobile_id/login.php?waitmore=' . $sesscode);
             break; 
         default:
-            redirect('/auth/mobile_id/login.php?error=' . $sesscode);
+            redirect('/auth/mobile_id/login.php?error=1&status=' . $status);
     }
 } 
 
