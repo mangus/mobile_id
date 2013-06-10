@@ -32,7 +32,7 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         $this->soapclient = new soapclient($this->wsdluri, $this->soapoptions);
     }
 
-    /** Starts Mobile-ID authentication sessopm with DigiDocService */
+    /** Starts Mobile-ID authentication session with DigiDocService */
     public function start_authenticate($input) {
         global $DB;
 
