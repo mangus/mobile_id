@@ -27,8 +27,9 @@ class auth_mobile_id_form extends moodleform {
             $phone = auth_mobile_id_form::phone_without_code($input);
 
             // Check if there is a user with that phone number in database...
-            $condition = $DB->sql_like('phone2', ':phone');
-            $params = array('phone' => "%$phone");
+            $values = array('+372' . $phone, '00372' . $phone, $phone);
+            list($in, $params) = $DB->get_in_or_equal($values);
+            $condition = 'phone2 ' . $in;
             if ($DB->count_records_select('user', $condition, $params) > 1)
                 redirect('/auth/mobile_id/login.php?multiplenumbers=1');
             $userid = $DB->get_field_select('user', 'id', $condition, $params);
