@@ -50,7 +50,7 @@ class auth_plugin_mobile_id extends auth_plugin_base {
         try {
             $response = $this->soapclient->MobileAuthenticate(
                 $userinfo->idnumber, 'EE', $userphone, $this->language_map($userinfo->lang),
-                $this->sitename, $this->sitemessage, '00100000000100000000',
+                $this->sitename, $this->sitemessage, $this->get_sp_challenge(),
                 'asynchClientServer', null, true, false
             );
         } catch (Exception $e) {
@@ -132,6 +132,14 @@ class auth_plugin_mobile_id extends auth_plugin_base {
     private function clean_old_logins() {
         global $DB;
         $DB->delete_records_select('mobile_id_login', 'starttime < ?', array(time()-120 /* 2 minutes */));
+    }
+
+    public function get_sp_challenge() {
+        $tenbytes = '';
+        for ($i = 0; $i < 10; $i++) {
+            $tenbytes .= base_convert(mt_rand(0, 255), 10, 16);
+        }
+        return $tenbytes;
     }
 
     /** Authentication to Moodle here */
