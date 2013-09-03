@@ -54,7 +54,7 @@ class auth_plugin_mobile_id extends auth_plugin_base {
                 'asynchClientServer', null, true, false
             );
         } catch (Exception $e) {
-            throw new Exception('Mobil-ID error');
+            throw new Exception('Mobile-ID error: ' . $e->getMessage());
         }
 
         // Keeping a recond in database
