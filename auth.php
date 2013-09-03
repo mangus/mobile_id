@@ -158,7 +158,7 @@ class auth_plugin_mobile_id extends auth_plugin_base {
             // You propably need to delete this
             require_once($CFG->dirroot.'/auth/askidnumber/auth.php');
             $ask = new auth_plugin_askidnumber();
-            $ask->user_authenticated_hook($usertologin);
+            $ask->user_authenticated_hook($usertologin, '', '');
             // End of this block
 
             $USER = complete_user_login($usertologin);
