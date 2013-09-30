@@ -137,7 +137,10 @@ class auth_plugin_mobile_id extends auth_plugin_base {
     public function get_sp_challenge() {
         $tenbytes = '';
         for ($i = 0; $i < 10; $i++) {
-            $tenbytes .= base_convert(mt_rand(0, 255), 10, 16);
+            $byte = base_convert(mt_rand(0, 255), 10, 16);
+            if (strlen($byte) < 2)
+                $byte = '0' . $byte;
+            $tenbytes .= $byte;
         }
         return $tenbytes;
     }
