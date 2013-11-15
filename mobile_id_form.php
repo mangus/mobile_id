@@ -9,6 +9,7 @@ class auth_mobile_id_form extends moodleform {
         global $CFG;
         $mform =& $this->_form;
         $mform->addElement('text', 'mobile_id', get_string('usernameorphone', 'auth_mobile_id'));
+        $mform->setType('mobile_id', PARAM_NOTAGS);
         $mform->addRule('mobile_id', get_string('err_whyempty', 'auth_mobile_id'),
             'required', null, 'client');
         $mform->addRule('mobile_id', get_string('err_incorrect', 'auth_mobile_id'),
