@@ -24,7 +24,7 @@ class auth_plugin_mobile_id extends auth_plugin_base {
             'cache_wsdl' => WSDL_CACHE_MEMORY,
             'trace' => true,
             'encoding' => 'utf-8',
-            'soap_version' => SOAP_1_2,
+            'soap_version' => SOAP_1_1,
             'classmap' => array(
                 array('MobileAuthenticateResponse' => 'MobileAuthenticateResponse')
             )
