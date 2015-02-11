@@ -11,7 +11,7 @@ require_once($CFG->dirroot.'/lib/authlib.php');
 
 class auth_plugin_mobile_id extends auth_plugin_base {
 
-    private $sitename = 'moodle.e-ope.ee';
+    private $sitename = 'moodle.hitsa.ee';
     private $sitemessage = 'Sisselogimine';
     private $wsdluri = 'https://digidocservice.sk.ee/?wsdl';
 
