@@ -1,36 +1,35 @@
-
 YUI().use('node', 'io-base', function (Y) {
     var toHide = Y.one('#hideWithJavascript');
     toHide.hide();
-    var sesscode = Y.one('#sesscode').getContent();
+    var sessionid = Y.one('#sessionid').getContent();
+
     function checkMobileIdStatus() {
         var request = Y.io('/auth/mobile_id/ajax.php', {
-            method:"GET",
-            data: {'sesscode': sesscode},
-            on: {success:
-                    function(id, answer) {
+            method: "GET",
+            data: {'sessionid': sessionid},
+            on: {
+                success:
+                    function (id, answer) {
                         if ('USER_AUTHENTICATED' == answer.response) {
-                            location.href='/auth/mobile_id/login.php?startlogin=' + sesscode;
-                        } else if ('EXPIRED_TRANSACTION' == answer.response) {
-                            location.href='/auth/mobile_id/login.php?timeout=1';                        
-                        } else if ('OUTSTANDING_TRANSACTION' == answer.response) {
-                            // Waiting more...
+                            location.replace('/auth/mobile_id/login.php?startlogin=' + sessionid);
                         } else
-                            location.href='/auth/mobile_id/login.php?error=1&status=' + answer.response;
+                            location.replace('/auth/mobile_id/login.php?error=1&status=' + answer.response);
                     },
                 failure:
-                    function(id, answer) {
-                        location.href='/auth/mobile_id/login.php?error=1&status=AJAX_REQUEST_FAILURE';
+                    function (id, answer) {
+                        location.replace('/auth/mobile_id/login.php?error=1&status=AJAX_REQUEST_FAILURE');
                     }
             }
         });
 
     }
+
     function printDots() {
         var messageText = Y.one('.generalbox');
         messageText.append('&nbsp.');
     }
-    setInterval(checkMobileIdStatus, 5000);
+
+    checkMobileIdStatus();
     setInterval(printDots, 1000);
 });
 

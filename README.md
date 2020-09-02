@@ -1,17 +1,16 @@
-Moodle Mobile-ID authentication plugin
-======================================
+# Moodle Mobile-ID authentication plugin
 
 Moodle auth plugin, that enables Mobile-ID logins.
 Works also without Javascript.
 License: GPL
 
-Installation instructions
-=========================
+## Installation instructions
 
 1. Copy files into <MoodleRoot>/auth/mobile_id/ directory (or just "git clone git://github.com/mangus/mobile_id")
-2. Change the $sitename and $sitemessage variables in auth.php lines 14-15
-3. Check lines 148-154 of auth.php -- probably You can comment these lines out
-4. Edit Your Moodles login pages to add link/image to /auth/mobile_id/login.php
-
-If You find bugs, report them in https://github.com/mangus/mobile_id/issues -- thanks!
-
+1. Install the plugin. See http://docs.moodle.org/en/Installing_plugins for details on installing Moodle plugins.
+1. To configure the plugin, add these lines to the config.php
+```
+$CFG->relyingPartyUUID = '00000000-0000-0000-0000-000000000000';
+$CFG->relyingPartyName = 'DEMO';
+$CFG->hostUrl = 'https://tsp.demo.sk.ee/mid-api';
+```

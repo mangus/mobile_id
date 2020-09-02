@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="auth/mobile_id/db" VERSION="2012102300" COMMENT="XMLDB file for Moodle auth_mobile_id"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="mobile_id_login" COMMENT="Saves information during Mobile-ID logins">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="sesscode"/>
-        <FIELD NAME="sesscode" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="sesscode" NEXT="controlcode"/>
-        <FIELD NAME="controlcode" TYPE="char" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="status"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="sessionid"/>
+        <FIELD NAME="sessionid" TYPE="char" LENGTH="36" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="sessionid" NEXT="controlcode"/>
+        <FIELD NAME="controlcode" TYPE="char" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="hash"/>
+        <FIELD NAME="hash" TYPE="text" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="controlcode" NEXT="status"/>
         <FIELD NAME="status" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="controlcode" NEXT="starttime"/>
         <FIELD NAME="starttime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="status"/>
       </FIELDS>
@@ -18,9 +19,8 @@
         <KEY NAME="userid_in_mobile_id_login" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="sesscode_index" UNIQUE="true" FIELDS="sesscode"/>
+        <INDEX NAME="sessionid_index" UNIQUE="true" FIELDS="sessionid"/>
       </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
-
